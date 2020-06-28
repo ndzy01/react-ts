@@ -9,12 +9,16 @@ interface IRouteItem extends RouteProps {
 let routes: IRouteItem[] = [
   {
     path: '/home', // 主页
-    view: 'Home',
+    view: 'home/index',
   },
   // ------components------
   {
-    path: '/nowTime',
-    components: 'nowTime/nowTime',
+    path: '/clock',
+    components: 'clock/clock',
+  },
+  {
+    path: '/drawer',
+    components: 'drawer/index',
   },
 ];
 

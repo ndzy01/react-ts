@@ -5,7 +5,7 @@ import Drawer01 from './drawer01';
 function DrawerShow() {
   const drawerShowRef: any = useRef();
   return (
-    <div className="App">
+    <div className="drawerShow">
       <Button
         type="primary"
         onClick={() => {
