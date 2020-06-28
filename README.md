@@ -1,8 +1,9 @@
-npm install sass-resources-loader -D
+# 加入全局的 sass 支持
 
+npm install sass-resources-loader -D
 npm install node-sass -S
 
-~~~js
+```js
 // 修改 config 文件夾下的 webpack.config.js 文件
 {
   test: sassRegex,
@@ -21,13 +22,21 @@ npm install node-sass -S
     loader: 'sass-resources-loader',
     options: {
       resources: [
+        // 文件路径自选
         path.resolve(__dirname, '../src/styles/global/common.scss'),
       ],
     },
   }),
   sideEffects: true,
 },
-~~~
+```
+
+# 加入路由的支持
 
 npm install react-router-dom @types/react-router-dom react-router -S
 
+# 加入网络请求的支持
+
+npm install axios -S
+
+# 加入动态路由支持
