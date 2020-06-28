@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Typography } from 'antd';
+const { Paragraph } = Typography;
 
 function dateFormat(fmt: string, date?: Date) {
   const date_ = date ? date : new Date();
@@ -48,7 +50,13 @@ function Clock() {
     setDateValue(dateFormat('yyyy-MM-dd hh:mm:ss', date));
   }, [date]);
 
-  return <span>{dateValue}</span>;
+  return (
+    <div>
+      <p>
+        <Paragraph copyable>{dateValue}</Paragraph>
+      </p>
+    </div>
+  );
 }
 
 export default Clock;
