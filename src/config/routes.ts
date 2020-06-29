@@ -20,6 +20,14 @@ let routes: IRouteItem[] = [
     path: '/drawer',
     components: 'drawer/index',
   },
+  {
+    path: '/form01',
+    components: 'form/form01',
+  },
+  {
+    path: '/print',
+    components: 'printA4/print',
+  },
 ];
 
 for (const item of routes) {

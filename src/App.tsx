@@ -8,8 +8,6 @@ import {
 } from 'react-router-dom';
 import { Button } from 'antd';
 import Drawer01 from './components/drawer/drawer01';
-// import Clock from './components/clock/clock';
-// import DrawerShow from './components/drawer';
 import { routes } from './config';
 import './App.scss';
 import { createHashHistory } from 'history';
@@ -17,7 +15,6 @@ const history = createHashHistory();
 
 function App() {
   const appRef: any = useRef();
-
   return (
     <div className="app">
       <header className="app-header">
