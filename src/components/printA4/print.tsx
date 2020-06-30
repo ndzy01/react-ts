@@ -1,4 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import Form01 from '../form/form01';
 
 const Print = (props: any, ref: any) => {
   const print = (cssStyle: string) => {
@@ -14,13 +15,16 @@ const Print = (props: any, ref: any) => {
     );
     printFrame.srcdoc = allHtml.documentElement.innerHTML;
     document.getElementsByTagName('body')[0].appendChild(printFrame);
-    printFrame.contentWindow.print();
+    console.log(printFrame);
+    // printFrame.contentWindow.print();
+    window.print();
   };
   useImperativeHandle(ref, () => {
     return { print };
   });
   return (
     <div className="app-main">
+      <Form01 />
       <ul>
         <li>11</li>
         <li>11</li>
