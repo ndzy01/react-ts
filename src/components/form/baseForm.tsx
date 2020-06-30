@@ -7,10 +7,11 @@ import {
   Input,
   Select,
   // TreeSelect,
-  // DatePicker,
+  DatePicker,
   // Cascader,
 } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import './baseForm.scss';
 const Option = Select.Option;
 const BaseForm = (props: any, ref: any) => {
   const [expand, setExpand] = useState(false);
@@ -101,7 +102,7 @@ const BaseForm = (props: any, ref: any) => {
                     inputLists[i].options.map((item: any, index: number) => {
                       return (
                         <Option
-                          value={item.val || item.val == 0 ? item.val : item}
+                          value={item.val || item.val === 0 ? item.val : item}
                           key={index}
                         >
                           {item.name || item}
@@ -109,6 +110,23 @@ const BaseForm = (props: any, ref: any) => {
                       );
                     })}
                 </Select>
+              </Form.Item>
+            </Col>
+          );
+        } else if (inputLists[i].type === 'date') {
+          children.push(
+            <Col key={i} span={6}>
+              <Form.Item
+                name={inputLists[i].keyword}
+                label={inputLists[i].label}
+                rules={[
+                  {
+                    required: true,
+                    message: '请选择!',
+                  },
+                ]}
+              >
+                <DatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           );
@@ -145,14 +163,14 @@ const BaseForm = (props: any, ref: any) => {
             >
               Clear
             </Button>
-            <a
-              style={{ fontSize: 12 }}
+            <span
+              className="base-form-span"
               onClick={() => {
                 setExpand(!expand);
               }}
             >
               {expand ? <UpOutlined /> : <DownOutlined />} Collapse
-            </a>
+            </span>
           </Col>
         </Row>
       </Form>

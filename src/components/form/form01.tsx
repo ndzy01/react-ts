@@ -20,6 +20,11 @@ const Form01 = () => {
     },
     {
       label: '申请时间',
+      keyword: 'testDate',
+      type: 'date',
+    },
+    {
+      label: '申请时间',
       keyword: 'createAt',
       type: 'range',
     },
