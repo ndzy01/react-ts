@@ -4,28 +4,35 @@ const Form01 = () => {
   const form01Ref: any = useRef();
   const inputLists = [
     {
-      label: '申请状态',
-      keyword: 'status',
+      label: 'test-select',
+      keyword: 'test-select',
       type: 'selects',
       options: [
-        { val: 1, name: '未审核' },
-        { val: 2, name: '同意' },
-        { val: 3, name: '不同意' },
+        { val: 1, name: 'test-select1' },
+        { val: 2, name: 'test-select2' },
+        { val: 3, name: 'test-select3' },
       ],
     },
     {
-      label: '申请单编号',
-      keyword: 'applySn',
-      type: 'input',
+      label: 'test-select-search',
+      keyword: 'test-select-search',
+      showSearch: true,
+      type: 'selects',
     },
     {
-      label: '申请时间',
-      keyword: 'testDate',
+      label: 'test-input',
+      keyword: 'test-input',
+      type: 'input',
+    },
+
+    {
+      label: 'test-date',
+      keyword: 'test-date',
       type: 'date',
     },
     {
-      label: '申请时间',
-      keyword: 'createAt',
+      label: 'test-date-range',
+      keyword: 'test-date-range',
       type: 'range',
     },
   ];

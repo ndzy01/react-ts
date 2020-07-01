@@ -28,6 +28,10 @@ let routes: IRouteItem[] = [
     path: '/print',
     components: 'printA4/print',
   },
+  {
+    path: '/workRecords',
+    components: 'workRecords/records',
+  },
 ];
 
 for (const item of routes) {
