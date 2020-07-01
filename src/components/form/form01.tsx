@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import BaseForm from './baseForm';
+import FormNdzy from './form';
 const Form01 = () => {
   const form01Ref: any = useRef();
   const inputLists = [
@@ -36,9 +37,44 @@ const Form01 = () => {
       type: 'range',
     },
   ];
+
+  const inputLists_ = [
+    {
+      label: '任务ID',
+      keyword: 'taskId',
+      type: 'input',
+    },
+    {
+      label: '任务描述',
+      keyword: 'taskDescription',
+      type: 'input',
+    },
+    {
+      label: '任务状态',
+      keyword: 'taskStatus',
+      type: 'selects',
+      options: [
+        { val: 0, name: '开发中' },
+        { val: 1, name: '需后台支持暂停开发' },
+        { val: 2, name: '完成并提交' },
+      ],
+    },
+    
+    {
+      label: '变更时间',
+      keyword: 'changeTime',
+      type: 'date',
+    },
+    {
+      label: '创建时间',
+      keyword: 'createTime',
+      type: 'date',
+    },
+  ];
   return (
     <div>
       <BaseForm ref={form01Ref} inputLists={inputLists} />
+      <FormNdzy inputLists={inputLists_}></FormNdzy>
     </div>
   );
 };
