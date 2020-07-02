@@ -32,6 +32,11 @@ let routes: IRouteItem[] = [
     path: '/workRecords',
     components: 'workRecords/records',
   },
+  // # feature01
+  {
+    path: '/baseForm',
+    components: 'baseForm',
+  },
 ];
 
 for (const item of routes) {
