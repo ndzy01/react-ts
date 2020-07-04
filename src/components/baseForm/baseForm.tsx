@@ -16,7 +16,7 @@ import {
   Cascader,
 } from 'antd';
 import moment from 'moment';
-import { unwatchFile } from 'fs';
+const { TextArea } = Input;
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -69,15 +69,11 @@ const BaseForm = (props: any, ref: any) => {
       for (let i = 0; i < inputLists.length; i++) {
         if (inputLists[i].type === 'input') {
           children.push(
-            <Col span={6}>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
               <Form.Item
                 name={inputLists[i].keyword}
                 label={inputLists[i].label}
-                initialValue={
-                  inputLists[i].defaultValue
-                  // ? inputLists[i].defaultValue
-                  // : undefined
-                }
+                initialValue={inputLists[i].defaultValue}
                 rules={
                   inputLists[i].required
                     ? [
@@ -97,17 +93,39 @@ const BaseForm = (props: any, ref: any) => {
               </Form.Item>
             </Col>
           );
-        } else if (inputLists[i].type === 'selects') {
+        } else if (inputLists[i].type === 'textArea') {
           children.push(
-            <Col span={6}>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
               <Form.Item
                 name={inputLists[i].keyword}
                 label={inputLists[i].label}
-                initialValue={
-                  inputLists[i].defaultValue
-                  // ? inputLists[i].defaultValue
-                  // : undefined
+                initialValue={inputLists[i].defaultValue}
+                rules={
+                  inputLists[i].required
+                    ? [
+                        {
+                          required: true,
+                          message: '请输入!',
+                        },
+                      ]
+                    : [
+                        {
+                          required: false,
+                        },
+                      ]
                 }
+              >
+                <TextArea rows={4} placeholder="请输入!" />
+              </Form.Item>
+            </Col>
+          );
+        } else if (inputLists[i].type === 'selects') {
+          children.push(
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
+              <Form.Item
+                name={inputLists[i].keyword}
+                label={inputLists[i].label}
+                initialValue={inputLists[i].defaultValue}
                 rules={
                   inputLists[i].required
                     ? [
@@ -155,12 +173,14 @@ const BaseForm = (props: any, ref: any) => {
           );
         } else if (inputLists[i].type === 'treeSelects') {
           children.push(
-            <Col span={24}>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
               <Form.Item
                 label={inputLists[i].label}
                 name={inputLists[i].keyword}
                 initialValue={
-                  inputLists[i].defaultValue ? inputLists[i].defaultValue : undefined
+                  inputLists[i].defaultValue
+                    ? inputLists[i].defaultValue
+                    : undefined
                 }
               >
                 <TreeSelect
@@ -184,27 +204,29 @@ const BaseForm = (props: any, ref: any) => {
           );
         } else if (inputLists[i].type === 'dbSelects') {
           children.push(
-            <Form.Item
-              label={inputLists[i].label}
-              name={inputLists[i].keyword}
-              initialValue={
-                inputLists[i].defaultValue ? inputLists[i].defaultValue : ''
-              }
-            >
-              <Cascader
-                fieldNames={{
-                  label: 'name',
-                  value: 'id',
-                  children: 'children',
-                }}
-                options={inputLists[i].options}
-                placeholder="请选择..."
-              />
-            </Form.Item>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
+              <Form.Item
+                label={inputLists[i].label}
+                name={inputLists[i].keyword}
+                initialValue={
+                  inputLists[i].defaultValue ? inputLists[i].defaultValue : ''
+                }
+              >
+                <Cascader
+                  fieldNames={{
+                    label: 'name',
+                    value: 'id',
+                    children: 'children',
+                  }}
+                  options={inputLists[i].options}
+                  placeholder="请选择..."
+                />
+              </Form.Item>
+            </Col>
           );
         } else if (inputLists[i].type === 'date') {
           children.push(
-            <Col span={6}>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
               <Form.Item
                 name={inputLists[i].keyword}
                 label={inputLists[i].label}
@@ -234,7 +256,7 @@ const BaseForm = (props: any, ref: any) => {
           );
         } else if (inputLists[i].type === 'range') {
           children.push(
-            <Col span={6}>
+            <Col span={inputLists[i].span ? inputLists[i].span : 6}>
               <Form.Item
                 label={inputLists[i].label}
                 name={inputLists[i].keyword}
