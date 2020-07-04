@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Popover } from 'antd';
+import { Table, Popover, Button } from 'antd';
 import timeCycle from '../timeCycle';
+import { createHashHistory } from 'history';
+const history = createHashHistory();
 
 function dateFormat(fmt: string, date?: Date) {
   const date_ = date ? date : new Date();
@@ -96,7 +98,7 @@ function WorkRecords() {
         if (text === 0) {
           return <span>开发中</span>;
         } else if (text === 1) {
-          return <span>需后台支持暂停开发</span>;
+          return <span>暂停开发</span>;
         } else if (text === 2) {
           return <span>完成并提交</span>;
         } else {
@@ -143,6 +145,16 @@ function WorkRecords() {
 
   return (
     <div>
+      <div>
+        <Button
+          type="link"
+          onClick={() => {
+            history.push('/addworkRecord');
+          }}
+        >
+          添加
+        </Button>
+      </div>
       <Table dataSource={dataSource} columns={columns} />
     </div>
   );
