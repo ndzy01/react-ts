@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import {
   Button,
   Form,
@@ -11,6 +16,7 @@ import {
   Cascader,
 } from 'antd';
 import moment from 'moment';
+import { unwatchFile } from 'fs';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -23,7 +29,7 @@ type PanelMode =
   | 'year'
   | 'decade';
 
-const BaseForm = (props: any) => {
+const BaseForm = (props: any, ref: any) => {
   const [baseForm] = Form.useForm();
   const [devCode, setDevCode] = useState([]); //搜索条件
   const [value, setValue] = useState();
@@ -69,8 +75,8 @@ const BaseForm = (props: any) => {
                 label={inputLists[i].label}
                 initialValue={
                   inputLists[i].defaultValue
-                    ? inputLists[i].defaultValue
-                    : undefined
+                  // ? inputLists[i].defaultValue
+                  // : undefined
                 }
                 rules={
                   inputLists[i].required
@@ -99,8 +105,8 @@ const BaseForm = (props: any) => {
                 label={inputLists[i].label}
                 initialValue={
                   inputLists[i].defaultValue
-                    ? inputLists[i].defaultValue
-                    : undefined
+                  // ? inputLists[i].defaultValue
+                  // : undefined
                 }
                 rules={
                   inputLists[i].required
@@ -119,7 +125,16 @@ const BaseForm = (props: any) => {
               >
                 <Select
                   mode={inputLists[i].mode}
+                  showSearch={
+                    inputLists[i].showSearch ? inputLists[i].showSearch : false
+                  }
                   allowClear
+                  optionFilterProp={
+                    inputLists[i].optionFilterProp
+                      ? inputLists[i].optionFilterProp
+                      : 'children'
+                  }
+                  filterOption={true}
                   placeholder="请选择..."
                 >
                   {inputLists[i].options &&
@@ -140,21 +155,32 @@ const BaseForm = (props: any) => {
           );
         } else if (inputLists[i].type === 'treeSelects') {
           children.push(
-            <Form.Item
-              label={inputLists[i].label}
-              name={inputLists[i].keyword}
-              initialValue={
-                inputLists[i].defaultValue ? inputLists[i].defaultValue : ''
-              }
-            >
-              <TreeSelect
-                allowClear
-                style={{ width: '100%' }}
-                dropdownStyle={{ maxHeight: 350, overflow: 'auto' }}
-                treeData={inputLists[i].options}
-                placeholder="请选择..."
-              />
-            </Form.Item>
+            <Col span={24}>
+              <Form.Item
+                label={inputLists[i].label}
+                name={inputLists[i].keyword}
+                initialValue={
+                  inputLists[i].defaultValue ? inputLists[i].defaultValue : undefined
+                }
+              >
+                <TreeSelect
+                  allowClear
+                  style={{ width: '100%' }}
+                  dropdownStyle={{ maxHeight: 350, overflow: 'auto' }}
+                  showSearch={
+                    inputLists[i].showSearch ? inputLists[i].showSearch : false
+                  }
+                  treeNodeFilterProp={
+                    inputLists[i].treeNodeFilterProp
+                      ? inputLists[i].treeNodeFilterProp
+                      : 'title'
+                  }
+                  autoClearSearchValue
+                  treeData={inputLists[i].options}
+                  placeholder="请选择..."
+                />
+              </Form.Item>
+            </Col>
           );
         } else if (inputLists[i].type === 'dbSelects') {
           children.push(
@@ -265,7 +291,7 @@ const BaseForm = (props: any) => {
           <Button
             style={{ margin: '0 8px' }}
             onClick={() => {
-              baseForm.resetFields();
+              onReset();
             }}
           >
             Clear
@@ -276,11 +302,12 @@ const BaseForm = (props: any) => {
 
     return children;
   };
-
   const onFinish = (values: any) => {
     console.log(values);
-    console.log(baseForm.getFieldsValue());
-    return values;
+  };
+
+  const onReset = () => {
+    baseForm.resetFields();
   };
   useEffect(() => {
     const { inputLists } = props;
@@ -290,6 +317,11 @@ const BaseForm = (props: any) => {
       }
     });
   }, [props]);
+  useImperativeHandle(ref, () => {
+    return {
+      baseForm: () => baseForm,
+    };
+  });
   return (
     <div>
       <Form form={baseForm} name="formNdzy" onFinish={onFinish}>
@@ -299,4 +331,4 @@ const BaseForm = (props: any) => {
   );
 };
 
-export default BaseForm;
+export default forwardRef(BaseForm);
