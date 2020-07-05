@@ -1,67 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Popover, Button } from 'antd';
+import React, { useState } from 'react';
+import { RouteComponentProps } from 'react-router';
+
+import {
+  Modal,
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Table,
+  Select,
+  DatePicker,
+  Popover,
+  message,
+} from 'antd';
+import moment from 'moment';
+
+import { useAntdTable } from 'ahooks';
+import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import timeCycle from '../timeCycle';
-import { createHashHistory } from 'history';
-const history = createHashHistory();
+import Breadcrumb from './breadcrumb';
+import { search, change } from '../../http/api/workRecords';
+const { TextArea } = Input;
 
-function dateFormat(fmt: string, date?: Date) {
-  const date_ = date ? date : new Date();
+const { Option } = Select;
 
-  const o: any = {
-    'M+': date_.getMonth() + 1, //月份
-    'd+': date_.getDate(), //日
-    'h+': date_.getHours(), //小时
-    'm+': date_.getMinutes(), //分
-    's+': date_.getSeconds(), //秒
-    'q+': Math.floor((date_.getMonth() + 3) / 3), //季度
-    S: date_.getMilliseconds(), //毫秒
-  };
-  if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(
-      RegExp.$1,
-      (date_.getFullYear() + '').substr(4 - RegExp.$1.length)
-    );
-  }
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(
-        RegExp.$1,
-        RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-      );
-    }
-  }
-  return fmt;
+interface Item {
+  taskId: string;
+  taskDescription: string;
+  taskStatus: '开发中' | '暂停开发' | '完成并提交';
+  createTime: string;
 }
 
-function WorkRecords() {
-  const [records, setRecords] = useState([]);
+interface Result {
+  total: number;
+  list: Item[];
+}
 
-  // useEffect(() => {
-  //   function tick() {
-  //     setDate(new Date());
-  //   }
-  //   const timerID = setInterval(tick, 1000);
+interface RequestData {
+  taskId: string;
+  taskDescription: string;
+  taskStatus: '开发中' | '暂停开发' | '完成并提交';
+  createTime: string;
+  page: number;
+  size: number;
+}
 
-  //   return function clearTick() {
-  //     clearInterval(timerID);
-  //   };
-  // });
+const getTableData = (
+  { current, pageSize }: PaginatedParams[0],
+  formData: Item
+): Promise<Result> => {
+  const formData_: RequestData = { ...formData, page: current, size: pageSize };
+  formData_.createTime = moment(formData_.createTime).format('YYYY-MM-DD');
+  return search('/workRecord/search', 'POST', formData_).then((res) => {
+    return {
+      total: res.data.data ? res.data.data.length : 0,
+      list: res.data.data,
+    };
+  });
+};
 
-  // useEffect(() => {
-  //   setDateValue(dateFormat('yyyy-MM-dd hh:mm:ss', date));
-  // }, [date]);
-  const dataSource = [
-    {
-      key: '1',
-      taskId: 'Mike',
-      taskDescription:
-        '321111111111111111111111111111111111111111111111111111111111111111',
-      taskStatus: 1,
-      changeTime: '1591006056404',
-      createTime: '1591006056404',
-      operate: { state: 2 },
-    },
-  ];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default (props: RouteComponentProps) => {
+  const [form] = Form.useForm();
+  const [modalForm] = Form.useForm();
+  const [visible, setVisible] = useState(false);
+  const [record, setRecord] = useState({
+    id: '',
+    taskId: '',
+    nowStatus: '',
+  });
+
+  const { tableProps, search } = useAntdTable(getTableData, {
+    defaultPageSize: 6,
+    form,
+  });
+
+  const { type, changeType, submit, reset } = search;
+  const hideModal = () => {
+    modalForm
+      .validateFields()
+      .then((values) => {
+        const requestData = {
+          ...record,
+          ...values,
+        };
+        change('/workRecord/change', 'POST', requestData)
+          .then(() => {
+            submit();
+            setVisible(false);
+          })
+          .catch(() => {
+            setVisible(false);
+          });
+      })
+      .catch(() => {
+        message.warning('请按要求填写表单数据！');
+      });
+  };
+
+  const hideCancel = () => {
+    setVisible(false);
+  };
 
   const columns: any = [
     {
@@ -74,7 +114,7 @@ function WorkRecords() {
       dataIndex: 'taskDescription',
       key: 'taskDescription',
       render: (text: string) => {
-        if (text.length > 20) {
+        if (text && text.length > 20) {
           return (
             <Popover
               placement="top"
@@ -107,12 +147,6 @@ function WorkRecords() {
       },
     },
     {
-      title: '变更时间',
-      dataIndex: 'changeTime',
-      key: 'changeTime',
-      render: (text: string) => timeCycle(text, true),
-    },
-    {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
@@ -126,38 +160,161 @@ function WorkRecords() {
       fixed: 'right',
       width: 120,
 
-      render: (text: any) => {
+      render: (text: any, obj: any) => {
         return (
-          <span>
-            {text.state == 2 ? (
-              <a>
-                <span>编辑</span>
-              </a>
-            ) : null}
-            <a>
-              <span>查看</span>
-            </a>
-          </span>
+          <div style={{ display: 'flex' }}>
+            <Button
+              type="link"
+              onClick={() => {
+                setRecord({
+                  id: obj.id,
+                  taskId: obj.taskId,
+                  nowStatus: obj.taskStatus,
+                });
+                setVisible(true);
+              }}
+            >
+              变更
+            </Button>
+            <Button
+              type="link"
+              onClick={() => {
+                props.history.push({ pathname: '/workRecordShow/' + obj.id });
+              }}
+            >
+              查看
+            </Button>
+          </div>
         );
       },
     },
   ];
 
-  return (
+  const advanceSearchForm = (
     <div>
-      <div>
-        <Button
-          type="link"
-          onClick={() => {
-            history.push('/addworkRecord');
-          }}
-        >
-          添加
-        </Button>
-      </div>
-      <Table dataSource={dataSource} columns={columns} />
+      <Form form={form}>
+        <Row gutter={24}>
+          <Col span={6}>
+            <Form.Item label="任务ID" name="taskId">
+              <Input placeholder="任务ID" />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="任务描述" name="taskDescription">
+              <Input placeholder="任务描述" />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="任务状态" name="taskStatus">
+              <Select placeholder="任务状态">
+                <Option value={0} key={0}>
+                  开发中
+                </Option>
+                <Option value={1} key={1}>
+                  暂停开发
+                </Option>
+                <Option value={2} key={2}>
+                  完成并提交
+                </Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="创建时间" name="createTime">
+              <DatePicker placeholder="创建时间" style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Form.Item style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button type="primary" onClick={submit}>
+              Search
+            </Button>
+            <Button onClick={reset} style={{ marginLeft: 16 }}>
+              Reset
+            </Button>
+            <Button type="link" onClick={changeType}>
+              Simple Search
+            </Button>
+          </Form.Item>
+        </Row>
+      </Form>
     </div>
   );
-}
 
-export default WorkRecords;
+  const searchFrom = (
+    <div style={{ marginBottom: 16 }}>
+      <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Form.Item name="taskId">
+          <Input.Search
+            placeholder="enter taskId"
+            style={{ width: 240 }}
+            onSearch={submit}
+          />
+        </Form.Item>
+        <Button type="link" onClick={changeType}>
+          Advanced Search
+        </Button>
+      </Form>
+    </div>
+  );
+
+  return (
+    <div>
+      <Modal
+        title="变更"
+        visible={visible}
+        onOk={hideModal}
+        onCancel={hideCancel}
+        okText="确认"
+        cancelText="取消"
+      >
+        <Form form={modalForm}>
+          <Row gutter={24}>
+            <Col span={24}>
+              <Form.Item
+                label="变更状态"
+                name="changeToStatus"
+                rules={[
+                  {
+                    required: true,
+                    message: '选择!',
+                  },
+                ]}
+              >
+                <Select placeholder="任务状态">
+                  <Option value={0} key={0}>
+                    开发中
+                  </Option>
+                  <Option value={1} key={1}>
+                    暂停开发
+                  </Option>
+                  <Option value={2} key={2}>
+                    完成并提交
+                  </Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                label="变更理由"
+                name="changeDescription"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入!',
+                  },
+                ]}
+              >
+                <TextArea rows={2} placeholder="变更理由描述" />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+      <Breadcrumb />
+      {type === 'simple' ? searchFrom : advanceSearchForm}
+      <Table columns={columns} {...tableProps} />
+    </div>
+  );
+};

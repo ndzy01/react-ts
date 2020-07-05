@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import { Button } from 'antd';
 import Drawer01 from './components/drawer/drawer01';
+
 import { routes } from './config';
 import './App.scss';
 import { createHashHistory } from 'history';
@@ -36,9 +37,9 @@ function App() {
           ref={appRef}
           childen={
             <ul>
-              {routes.map((item: any) => {
+              {routes.routes.map((item: any) => {
                 return (
-                  <li>
+                  <li key={item.path}>
                     <span
                       className="app-span"
                       onClick={() => history.push(item.path)}
@@ -57,7 +58,7 @@ function App() {
               {/* fallback 加载时显示  */}
               <Suspense fallback={<span>正在加载！</span>}>
                 <Switch>
-                  {routes.map((route, i) => {
+                  {routes.routes.map((route, i) => {
                     return <Route key={i} {...route} />;
                   })}
                   <Redirect path="/" to={{ pathname: '/home' }} />
@@ -72,29 +73,6 @@ function App() {
         </div>
       </div>
     </div>
-    // <div className="App">
-    //   <HashRouter>
-    //     {/* fallback 加载时显示  */}
-    //     <Suspense fallback={<span>正在加载！</span>}>
-    //       <Switch>
-    //         {routes.map((route, i) => {
-    //           return <Route key={i} {...route} />;
-    //         })}
-    //         <Redirect path="/" to={{ pathname: '/home' }} />
-    //         {/* <Route component={Err404} /> */}
-    //       </Switch>
-    //     </Suspense>
-    //   </HashRouter>
-
-    //   <Clock />
-    //   <DrawerShow />
-    //   <div style={{ height: '20px', overflowY: 'scroll' }}>
-    //     <p>111111111111111111111111</p>
-    //     <p>1111</p>
-    //     <p>1111</p>
-    //     <p>1111</p>
-    //   </div>
-    // </div>
   );
 }
 

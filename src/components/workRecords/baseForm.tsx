@@ -1,9 +1,5 @@
-import React, {
-  useState,
-  // useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from 'react';
+import React, { useState } from 'react';
+import { useRequest } from 'ahooks';
 import {
   Button,
   Form,
@@ -14,22 +10,26 @@ import {
   TreeSelect,
   DatePicker,
   Cascader,
+  message,
 } from 'antd';
+import Breadcrumb from './breadcrumb';
+import { save, getRecordByTaskId } from '../../http/api/workRecords';
 import moment from 'moment';
+// type PanelMode =
+//   | 'time'
+//   | 'date'
+//   | 'week'
+//   | 'month'
+//   | 'quarter'
+//   | 'year'
+//   | 'decade';
+
 const { TextArea } = Input;
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
-type PanelMode =
-  | 'time'
-  | 'date'
-  | 'week'
-  | 'month'
-  | 'quarter'
-  | 'year'
-  | 'decade';
 
-const BaseForm = (props: any, ref: any) => {
+export default (props: any) => {
   const [baseForm] = Form.useForm();
   const [value, setValue] = useState();
 
@@ -47,6 +47,24 @@ const BaseForm = (props: any, ref: any) => {
     });
     setValue(value);
   };
+  const { loading, run } = useRequest('/workRecord/save', {
+    requestMethod: (url) => {
+      return getRecordByTaskId('/workRecord/getRecordByTaskId', 'POST', {
+        taskId: baseForm.getFieldsValue().taskId,
+      }).then((res) => {
+        if (res.data.code === 1) {
+          message.warning('任务重复！');
+        } else {
+          save(url, 'POST', baseForm.getFieldsValue()).then(() => {
+            baseForm.resetFields();
+            message.success('保存成功！');
+          });
+        }
+      });
+    },
+    manual: true,
+  });
+
   const onReset = () => {
     baseForm.resetFields();
   };
@@ -296,9 +314,10 @@ const BaseForm = (props: any, ref: any) => {
       }
       children.push(
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            submit
+          <Button disabled={loading} type="primary" htmlType="submit">
+            {loading ? 'loading' : 'submit'}
           </Button>
+
           <Button
             style={{ margin: '0 8px' }}
             onClick={() => {
@@ -313,30 +332,19 @@ const BaseForm = (props: any, ref: any) => {
 
     return children;
   };
-  const onFinish = (values: any) => {
-    console.log(values);
-  };
 
-  // useEffect(() => {
-  //   const { inputLists } = props;
-  //   inputLists.forEach((item: any) => {
-  //     if (item.label === '设备编号') {
-  //       getDevCode('');
-  //     }
-  //   });
-  // }, [props]);
-  useImperativeHandle(ref, () => {
-    return {
-      baseForm: () => baseForm,
-    };
-  });
   return (
     <div>
-      <Form form={baseForm} name="formNdzy" onFinish={onFinish}>
+      <Breadcrumb />
+      <Form
+        form={baseForm}
+        name="formNdzy"
+        onFinish={() => {
+          run();
+        }}
+      >
         <Row>{getFields()}</Row>
       </Form>
     </div>
   );
 };
-
-export default forwardRef(BaseForm);

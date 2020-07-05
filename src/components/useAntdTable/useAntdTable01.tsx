@@ -21,7 +21,7 @@ interface Result {
 
 const getTableData = (
   { current, pageSize }: PaginatedParams[0],
-  formData: Object
+  formData: Record<string, any>
 ): Promise<Result> => {
   let query = `page=${current}&size=${pageSize}`;
   Object.entries(formData).forEach(([key, value]) => {

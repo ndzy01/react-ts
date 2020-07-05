@@ -6,13 +6,13 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 // 国际化
 import { ConfigProvider } from 'antd';
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 ReactDOM.render(
   <React.StrictMode>
-    <ConfigProvider locale={zh_CN}>
+    <ConfigProvider locale={zhCN}>
       <App />
     </ConfigProvider>
   </React.StrictMode>,

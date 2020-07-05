@@ -1,14 +1,12 @@
 import React from 'react';
-import Form01 from '../form/form01';
 interface PrintProps {
   cssStyle: string;
   child: any;
 }
 
-const PrintBase = (props: any) => {
+const PrintBase = () => {
   return (
     <div className="app-main">
-      <Form01 />
       <ul>
         <li>11</li>
         <li>11</li>

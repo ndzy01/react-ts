@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
-import BaseForm from '../baseForm/baseForm';
-import { Button } from 'antd';
+import BaseForm from './baseForm';
 
 export default () => {
   const formRef: any = useRef();
@@ -10,12 +9,14 @@ export default () => {
       keyword: 'taskId',
       type: 'input',
       required: true,
+      span: 24,
     },
     {
       label: '任务描述',
       keyword: 'taskDescription',
-      type: 'input',
+      type: 'textArea',
       required: true,
+      span: 24,
     },
     {
       label: '任务状态',
@@ -27,38 +28,12 @@ export default () => {
         { val: 2, name: '完成并提交' },
       ],
       defaultValue: 0,
+      span: 24,
     },
-    // {
-    //   label: '变更时间',
-    //   keyword: 'changeTime',
-    //   type: 'date',
-    // },
-    // {
-    //   label: '创建时间',
-    //   keyword: 'createTime',
-    //   type: 'date',
-    // },
   ];
   return (
     <div>
       <BaseForm ref={formRef} inputLists={inputLists} />
-      <Button
-        type="primary"
-        htmlType="submit"
-        onClick={() => {
-          console.log(formRef.current.baseForm().getFieldsValue());
-        }}
-      >
-        获取表单数据
-      </Button>
-      <Button
-        style={{ margin: '0 8px' }}
-        onClick={() => {
-          formRef.current.baseForm().resetFields();
-        }}
-      >
-        Clear
-      </Button>
     </div>
   );
 };
