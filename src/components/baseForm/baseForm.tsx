@@ -317,14 +317,6 @@ const BaseForm = (props: any, ref: any) => {
     console.log(values);
   };
 
-  // useEffect(() => {
-  //   const { inputLists } = props;
-  //   inputLists.forEach((item: any) => {
-  //     if (item.label === '设备编号') {
-  //       getDevCode('');
-  //     }
-  //   });
-  // }, [props]);
   useImperativeHandle(ref, () => {
     return {
       baseForm: () => baseForm,

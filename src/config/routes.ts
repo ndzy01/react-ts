@@ -68,7 +68,6 @@ const routes_: Route[] = routes.map((route) => {
   };
   return obj;
 });
-console.log(routes_);
 for (const item of routes) {
   if (item.view) {
     item.component = lazy(() => import(('../views/' + item.view) as string));
