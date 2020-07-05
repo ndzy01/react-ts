@@ -2,8 +2,8 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Drawer } from 'antd';
 
 const Drawer01 = (props: any, ref: any) => {
-  let [visible, setVisible] = useState(false);
-  let showDrawer = () => {
+  const [visible, setVisible] = useState(false);
+  const showDrawer = () => {
     setVisible(true);
   };
   useImperativeHandle(ref, () => {
@@ -11,7 +11,7 @@ const Drawer01 = (props: any, ref: any) => {
       showDrawer,
     };
   });
-  let onClose = () => {
+  const onClose = () => {
     props._close && props._close();
     setVisible(false);
   };

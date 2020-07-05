@@ -20,7 +20,7 @@ function dateFormat(fmt: string, date?: Date) {
       (date_.getFullYear() + '').substr(4 - RegExp.$1.length)
     );
   }
-  for (var k in o) {
+  for (const k in o) {
     if (new RegExp('(' + k + ')').test(fmt)) {
       fmt = fmt.replace(
         RegExp.$1,
