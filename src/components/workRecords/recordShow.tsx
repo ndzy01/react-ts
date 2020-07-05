@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-
+import Breadcrumb from './breadcrumb';
 import { Popover, Table, Button } from 'antd';
 import timeCycle from '../timeCycle';
 import { recordShow } from '../../http/api/workRecords';
@@ -17,10 +17,12 @@ export default (props: RouteComponentProps) => {
     const id = props.location.pathname.split('/')[
       props.location.pathname.split('/').length - 1
     ];
-    recordShow('/workRecord/show', 'POST', { id }).then((res) => {
-      setRecord(res.data.data[0][0]);
-      setTableData(res.data.data[1]);
-    });
+    if (id !== 'workRecordShow') {
+      recordShow('/workRecord/show', 'POST', { id }).then((res) => {
+        setRecord(res.data.data[0][0]);
+        setTableData(res.data.data[1]);
+      });
+    }
   }, [props]);
   const columns: any = [
     {
@@ -91,6 +93,7 @@ export default (props: RouteComponentProps) => {
 
   return (
     <div>
+      <Breadcrumb />
       <div>
         {record.taskId ? (
           <p>
