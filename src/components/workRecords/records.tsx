@@ -54,7 +54,7 @@ const getTableData = (
   formData_.createTime = moment(formData_.createTime).format('YYYY-MM-DD');
   return search('/workRecord/search', 'POST', formData_).then((res) => {
     return {
-      total: res.data.data ? res.data.data.length : 0,
+      total: res.data.totalRecords ? res.data.totalRecords : 0,
       list: res.data.data,
     };
   });
@@ -88,6 +88,7 @@ export default (props: RouteComponentProps) => {
         change('/workRecord/change', 'POST', requestData)
           .then(() => {
             submit();
+            modalForm.resetFields();
             setVisible(false);
           })
           .catch(() => {
@@ -122,7 +123,7 @@ export default (props: RouteComponentProps) => {
               content={text}
               trigger="click"
             >
-              <span>{text.slice(20) + '......'}</span>
+              <span>{text.substr(0, 20) + '......'}</span>
             </Popover>
           );
         }

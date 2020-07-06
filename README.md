@@ -52,3 +52,8 @@ npm install antd -S
 # 加入 ahooks
 
 npm install ahooks -S
+
+# mockjs
+
+npm install mockjs -S
+npm install @types/mockjs -S
