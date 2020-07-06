@@ -60,6 +60,16 @@ const routes: MRouteItem[] = [
     components: 'workRecords/recordShow',
     breadcrumbName: '工作记录展示',
   },
+  {
+    path: '/ahooks/useRequest',
+    components: 'ahooks/useRequest',
+    breadcrumbName: 'useRequest',
+  },
+  {
+    path: '/ahooks/lifeCycle',
+    components: 'ahooks/lifeCycle',
+    breadcrumbName: 'lifeCycle',
+  },
 ];
 const routes_: Route[] = routes.map((route) => {
   const obj: Route = {
