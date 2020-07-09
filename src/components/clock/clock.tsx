@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Typography } from 'antd';
 const { Paragraph } = Typography;
 
@@ -34,6 +35,7 @@ function dateFormat(fmt: string, date?: Date) {
 function Clock() {
   const [date, setDate] = useState(new Date());
   const [dateValue, setDateValue] = useState('');
+  const [dateValue1, setDateValue1] = useState('');
 
   useEffect(() => {
     function tick() {
@@ -48,12 +50,14 @@ function Clock() {
 
   useEffect(() => {
     setDateValue(dateFormat('yyyy-MM-dd hh:mm:ss', date));
+    setDateValue1(moment(date).format('YYYY-MM-DD-HH-mm-ss'));
   }, [date]);
 
   return (
     <div>
       <p>
         <Paragraph copyable>{dateValue}</Paragraph>
+        <Paragraph copyable>{dateValue1}</Paragraph>
       </p>
     </div>
   );

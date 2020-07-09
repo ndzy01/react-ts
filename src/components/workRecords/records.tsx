@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-
 import {
   Modal,
   Button,
@@ -51,7 +50,9 @@ const getTableData = (
   formData: Item
 ): Promise<Result> => {
   const formData_: RequestData = { ...formData, page: current, size: pageSize };
-  formData_.createTime = moment(formData_.createTime).format('YYYY-MM-DD');
+  if (formData_.createTime) {
+    formData_.createTime = moment(formData_.createTime).format('YYYY-MM-DD');
+  }
   return search('/workRecord/search', 'POST', formData_).then((res) => {
     return {
       total: res.data.totalRecords ? res.data.totalRecords : 0,
@@ -60,7 +61,6 @@ const getTableData = (
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default (props: RouteComponentProps) => {
   const [form] = Form.useForm();
   const [modalForm] = Form.useForm();
@@ -77,6 +77,8 @@ export default (props: RouteComponentProps) => {
   });
 
   const { type, changeType, submit, reset } = search;
+
+  // 信息变更
   const hideModal = () => {
     modalForm
       .validateFields()
@@ -99,7 +101,7 @@ export default (props: RouteComponentProps) => {
         message.warning('请按要求填写表单数据！');
       });
   };
-
+  // 取消信息变更
   const hideCancel = () => {
     setVisible(false);
   };
@@ -270,48 +272,65 @@ export default (props: RouteComponentProps) => {
         okText="确认"
         cancelText="取消"
       >
-        <Form form={modalForm}>
-          <Row gutter={24}>
-            <Col span={24}>
-              <Form.Item
-                label="变更状态"
-                name="changeToStatus"
-                rules={[
-                  {
-                    required: true,
-                    message: '选择!',
-                  },
-                ]}
-              >
-                <Select placeholder="任务状态">
-                  <Option value={0} key={0}>
-                    开发中
-                  </Option>
-                  <Option value={1} key={1}>
-                    暂停开发
-                  </Option>
-                  <Option value={2} key={2}>
-                    完成并提交
-                  </Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label="变更理由"
-                name="changeDescription"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入!',
-                  },
-                ]}
-              >
-                <TextArea rows={2} placeholder="变更理由描述" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+        <div>
+          <Form form={modalForm}>
+            <Row gutter={24}>
+              <Col span={24}>
+                <Form.Item label="变更前状态">
+                  {console.log(record.nowStatus)}
+                  {parseInt(record.nowStatus) === 0 ? (
+                    <span>开发中</span>
+                  ) : parseInt(record.nowStatus) == 1 ? (
+                    <span>暂停开发</span>
+                  ) : parseInt(record.nowStatus) == 2 ? (
+                    <span>完成并提交</span>
+                  ) : (
+                    <span>---</span>
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <Form.Item
+                  label="变更状态"
+                  name="changeToStatus"
+                  rules={[
+                    {
+                      required: true,
+                      message: '请选择!',
+                    },
+                  ]}
+                >
+                  <Select placeholder="任务状态">
+                    <Option value={0} key={0}>
+                      开发中
+                    </Option>
+                    <Option value={1} key={1}>
+                      暂停开发
+                    </Option>
+                    <Option value={2} key={2}>
+                      完成并提交
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="变更理由"
+                  name="changeDescription"
+                  rules={[
+                    {
+                      required: true,
+                      message: '请输入!',
+                    },
+                  ]}
+                >
+                  <TextArea rows={2} placeholder="变更理由描述" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </div>
       </Modal>
       <Breadcrumb />
       {type === 'simple' ? searchFrom : advanceSearchForm}
