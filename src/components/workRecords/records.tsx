@@ -277,7 +277,6 @@ export default (props: RouteComponentProps) => {
             <Row gutter={24}>
               <Col span={24}>
                 <Form.Item label="变更前状态">
-                  {console.log(record.nowStatus)}
                   {parseInt(record.nowStatus) === 0 ? (
                     <span>开发中</span>
                   ) : parseInt(record.nowStatus) == 1 ? (
