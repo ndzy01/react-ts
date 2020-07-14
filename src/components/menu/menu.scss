@@ -1,0 +1,47 @@
+.menu {
+  width: 220px;
+  height: 820px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 150, 149, 1) 0%,
+    rgba(13, 88, 151, 1) 100%
+  );
+  box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+  &-title {
+    height: 76px;
+    overflow: hidden;
+    &-info {
+      display: flex;
+      width: 161px;
+      height: 40px;
+      margin-right: 35px;
+      margin-left: 40px;
+      margin-top: 25px;
+      &-img {
+        height: 40px;
+        width: 40px;
+        background-color: red;
+      }
+      &-des {
+        width: 105px;
+        height: 22px;
+        font-size: 21px;
+        font-family: BigYoungBoldGB20;
+        color: rgba(255, 255, 255, 1);
+        line-height: 22px;
+        margin: 9px 0 9px 16px;
+      }
+    }
+  }
+}
+
+.menu-collapsed {
+  width: 56px;
+  height: 820px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 150, 149, 1) 0%,
+    rgba(13, 88, 151, 1) 100%
+  );
+  box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+}

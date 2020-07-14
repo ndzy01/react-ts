@@ -57,3 +57,7 @@ npm install ahooks -S
 
 npm install mockjs -S
 npm install @types/mockjs -S
+
+# redux
+
+npm install redux react-redux @types/react-redux

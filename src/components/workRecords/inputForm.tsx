@@ -1,5 +1,4 @@
 import React from 'react';
-import { useRequest } from 'ahooks';
 import {
   Button,
   Form,
@@ -12,7 +11,7 @@ import {
 import Breadcrumb from './breadcrumb';
 
 import { workRecords } from '../../http/api/workRecords';
-import http from '../../http';
+import { useLazyAxiosReq } from '../../http';
 const { TextArea } = Input;
 
 const Option = Select.Option;
@@ -67,25 +66,8 @@ export default () => {
     baseForm.resetFields();
   };
 
-  const saveRequest = useRequest(
-    {
-      ...workRecords.save,
-    },
-    {
-      manual: true,
-      requestMethod: (param: any) => http(param),
-      formatResult: (res) => res.data,
-    }
-  );
-  const getRecordByTaskIdRequest = useRequest(
-    (param) => {
-      return http(param);
-    },
-    {
-      manual: true,
-      formatResult: (res) => res.data,
-    }
-  );
+  const { run: run1 } = useLazyAxiosReq();
+  const { run: saveRun, loading: saveLoading } = useLazyAxiosReq();
 
   const getFields = () => {
     const children = [];
@@ -102,26 +84,19 @@ export default () => {
                 inputLists[i].required
                   ? [
                       {
-                        validator: (_, value) => {
-                          return new Promise((resolve, reject) => {
-                            getRecordByTaskIdRequest.run({
-                              ...workRecords.getRecordByTaskId,
-                              data: {
-                                taskId: value,
-                              },
-                            });
-                            if (!value) {
-                              reject('请输入！！');
-                            } else if (
-                              getRecordByTaskIdRequest.data &&
-                              getRecordByTaskIdRequest.data.code === 1
-                            ) {
-                              console.log('111');
-                              reject('该任务已存在！!');
-                            } else {
-                              resolve();
-                            }
+                        validator: async (_, value) => {
+                          const res = await run1({
+                            ...workRecords.getRecordByTaskId,
+                            data: {
+                              taskId: value,
+                            },
                           });
+
+                          if (!value || value === '') {
+                            throw new Error('请输入！！');
+                          } else if (res && res.code === 1) {
+                            throw new Error('该任务已存在！!');
+                          }
                         },
                       },
                     ]
@@ -210,8 +185,8 @@ export default () => {
     }
     children.push(
       <Form.Item>
-        <Button disabled={saveRequest.loading} type="primary" htmlType="submit">
-          {saveRequest.loading ? 'loading' : 'submit'}
+        <Button disabled={saveLoading} type="primary" htmlType="submit">
+          {saveLoading ? 'loading' : 'submit'}
         </Button>
 
         <Button
@@ -233,8 +208,9 @@ export default () => {
       <Form
         form={baseForm}
         name="records-input-form"
-        onFinish={() => {
-          saveRequest.run();
+        onFinish={(values) => {
+          console.log(values);
+          saveRun({ ...workRecords.save, data: values });
         }}
       >
         <Row>{getFields()}</Row>

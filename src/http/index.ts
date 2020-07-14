@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { baseUrl } from '../config';
+import { useRequest } from 'ahooks';
 
 const http = axios.create({
   baseURL:
@@ -19,5 +20,18 @@ http.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+export const useAxiosReq = (options?: any) => useRequest((param) => param, {
+  requestMethod: (param: any) => http(param),
+  formatResult: (res: AxiosResponse) => res.data,
+  ...options,
+});
+
+export const useLazyAxiosReq = (options?: any) => useRequest((param) => param, {
+  manual: true,
+  requestMethod: (param: any) => http(param),
+  formatResult: (res: AxiosResponse) => res.data,
+  ...options,
+});
 
 export default http;

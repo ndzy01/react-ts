@@ -2,61 +2,150 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  &-span {
-    color: skyblue;
-  }
-  &-span:hover {
-    color: pink;
-  }
-  &-margin10 {
-    margin: 0 10px;
-  }
-  &-header {
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-    max-width: 100%;
-    background: #fff;
-    box-shadow: 0 2px 8px #f0f1f2;
-    &-body {
-      display: flex;
-      width: 100%;
-      &-logo {
-        display: inline-block;
-        height: 60px;
-        width: 60px;
-        padding: 5px;
-        line-height: 50px;
-        box-sizing: border-box;
+  .ant-layout-sider {
+    background: linear-gradient(
+      180deg,
+      rgba(15, 150, 149, 1) 0%,
+      rgba(13, 88, 151, 1) 100%
+    );
+    box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+
+    .ant-menu {
+      background: linear-gradient(
+        180deg,
+        rgba(15, 150, 149, 1) 0%,
+        rgba(13, 88, 151, 1) 100%
+      );
+      box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+      span {
+        font-size: 14px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      &:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        background: linear-gradient(
+          225deg,
+          rgba(16, 205, 214, 1) 0%,
+          rgba(45, 153, 255, 1) 100%
+        );
+      }
+    }
+    .ant-menu-inline {
+      border-right: 0;
+      .ant-menu-submenu {
+        .ant-menu-submenu-title {
+          color: rgba(255, 255, 255, 1);
+        }
+        li {
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+    }
+    // menu collapsed
+    .ant-menu-inline-collapsed {
+      width: 56px;
+      border-right: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(15, 150, 149, 1) 0%,
+        rgba(13, 88, 151, 1) 100%
+      );
+      box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+      .ant-menu-item {
+        left: 0;
+        padding: 0 0 0 16px;
+        text-overflow: clip;
+      }
+      .ant-menu-submenu {
+        .ant-menu-submenu-title {
+          left: 0;
+          padding: 0 0 0 16px;
+          text-overflow: clip;
+        }
       }
     }
   }
-  &-footer {
-    color: #fff;
-    min-height: 60px;
-    // 代码作用 使子元素 水平垂直居中
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 76px;
+  overflow: hidden;
+  &-info {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 161px;
+    height: 40px;
+    margin-right: 35px;
+    margin-left: 24px;
+    margin-top: 25px;
+    &-img {
+      height: 40px;
+      width: 40px;
+      background-color: red;
+    }
+    &-des {
+      width: 105px;
+      height: 22px;
+      font-size: 21px;
+      font-family: BigYoungBoldGB20;
+      color: rgba(255, 255, 255, 1);
+      line-height: 22px;
+      margin: 9px 0 9px 16px;
+    }
   }
+}
 
-  &-body {
-    min-height: 300px;
-    flex: auto;
-    display: flex;
-    &-main {
-      min-height: 300px;
-      flex: auto;
-      display: flex;
-      flex-direction: column;
+.logo-inline-collapsed {
+  width: 56px;
+  &-info {
+    width: 32px;
+    height: 32px;
+    margin: 17px 12px;
+    background-color: red;
+  }
+  &-des {
+    display: none;
+  }
+}
 
-      &-content {
-        min-height: 300px;
-        padding: 20px;
-        flex: auto;
-      }
+.site-layout .site-layout-background {
+  background: #fff;
+}
+
+
+
+// 悬浮层 样式调整
+.ant-menu-submenu-popup {
+  .ant-menu {
+    background: linear-gradient(
+      180deg,
+      rgba(12, 119, 127, 1) 0%,
+      rgba(11, 97, 128, 1) 100%
+    );
+    box-shadow: 2px 0px 8px 0px rgba(21, 128, 152, 0.2);
+    border-radius: 2px;
+    span {
+      color: rgba(255, 255, 255, 1);
+    }
+    &:not(.ant-menu-horizontal) .ant-menu-item-selected {
+      background: linear-gradient(
+        225deg,
+        rgba(16, 205, 214, 1) 0%,
+        rgba(45, 153, 255, 1) 100%
+      );
     }
   }
 }

@@ -1,5 +1,10 @@
 import request from '../';
-const workRecords = {
+import { AxiosRequestConfig } from 'axios';
+type HttpMethod = '"post" | "head" | "link" | "get" | "GET" | "delete" | "DELETE" | "HEAD" | "options" | "OPTIONS" | "POST" | "put" | "PUT" | "patch" | "PATCH" | "LINK" | "unlink" | "UNLINK" | undefined';
+interface WorkRecords {
+  [attribute: string]: AxiosRequestConfig;
+}
+const workRecords: WorkRecords = {
   save: {
     url: '/workRecord/save',
     method: 'post',
