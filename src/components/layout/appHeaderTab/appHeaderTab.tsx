@@ -9,6 +9,7 @@ import { Tabs } from 'antd';
 
 import store from '../../../redux/redux';
 import { setActiveKey, removePageTab } from '../../../redux/pageTab/actions';
+import './appHeaderTab.scss';
 
 const { TabPane } = Tabs;
 
@@ -17,24 +18,22 @@ export default withRouter(
     const onTabChange = (activeKey: string) => {
       props.setActiveKey(activeKey);
       props.history.push(activeKey);
-      // console.log(store.getState().pageTabState.activeKey);
     };
-    const remove = (targetKey: any) => {
-      let { activeKey } = store.getState().pageTabState;
-
+    const remove = (targetKey: string) => {
+      let activeKey;
       let lastIndex = -1;
       store
         .getState()
-        .pageTabState.pageTabArr.slice()
-        .forEach((item: any, i: number) => {
+        .pageTabReducer.pageTabArr.slice()
+        .forEach((item, i: number) => {
           if (item.url === targetKey) {
             lastIndex = i - 1;
           }
         });
       const panes = store
         .getState()
-        .pageTabState.pageTabArr.slice()
-        .filter((pane: any) => pane.url !== targetKey);
+        .pageTabReducer.pageTabArr.slice()
+        .filter((pane) => pane.url !== targetKey);
 
       if (panes.length) {
         if (lastIndex >= 0) {
@@ -47,8 +46,10 @@ export default withRouter(
       props.setActiveKey(activeKey);
       props.removePageTab(panes);
     };
-    const onEdit = (targetKey: any) => {
-      remove(targetKey);
+    const onEdit = (
+      targetKey: React.MouseEvent | React.KeyboardEvent | string
+    ) => {
+      remove(targetKey as string);
     };
     return (
       <div className="ant-layout-header-under">
@@ -56,29 +57,35 @@ export default withRouter(
           onChange={onTabChange}
           hideAdd
           animated={false}
-          activeKey={store.getState().pageTabState.activeKey[0]}
+          activeKey={store.getState().pageTabReducer.activeKey[0]}
           type="editable-card"
           onEdit={onEdit}
-          tabBarExtraContent={<div>清空</div>}
-          // tabBarStyle={{
-          //   width: '70px',
-          //   height: '22px',
-          //   fontSize: '14px',
-          //   fontFamily: 'PingFangSC-Regular,PingFang SC',
-          //   fontWeight: 400,
-          //   color: 'rgba(120,127,133,1)',
-          //   lineHeight: '22px',
-          // }}
+          tabBarExtraContent={
+            <span
+              onClick={() => {
+                const { pageTabArr } = store.getState().pageTabReducer;
+
+                const activeKey = store.getState().pageTabReducer.activeKey[0];
+                const activeKeyTab = [
+                  ...pageTabArr.slice().filter((pane) => pane.url == activeKey),
+                ];
+                props.removePageTab(activeKeyTab);
+                // appTabStore.removePageTab(activeKeyTab);
+              }}
+            >
+              清空其他
+            </span>
+          }
         >
           {store
             .getState()
-            .pageTabState.pageTabArr.slice()
-            .map((item: any) => (
+            .pageTabReducer.pageTabArr.slice()
+            .map((item) => (
               <TabPane
                 tab={item.name}
                 key={item.url}
                 closable={
-                  store.getState().pageTabState.pageTabArr.slice().length > 1
+                  store.getState().pageTabReducer.pageTabArr.slice().length > 1
                 }
               ></TabPane>
             ))}

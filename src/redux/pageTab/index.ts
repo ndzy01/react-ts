@@ -1,2 +1,2 @@
-import { pageTabState } from './pageTab.redux';
-export default pageTabState;
+import pageTabReducer from './pageTab.redux';
+export default pageTabReducer;

@@ -1,3 +1,5 @@
+import { Action } from 'redux-actions';
+import { PageTab } from '../../../redux/pageTab/types';
 import React, { ReactNode, useState } from 'react';
 import { connect } from 'react-redux';
 import { Menu } from 'antd';
@@ -10,6 +12,9 @@ import { Link } from 'react-router-dom';
 import { setActiveKey, addPageTab } from '../../../redux/pageTab/actions';
 // import { saveMenus } from '../../../redux/menu/actions';
 import store from '../../../redux/redux';
+import './menu.scss';
+import { SelectParam } from 'antd/lib/menu';
+
 export interface MenuItem {
   key?: string;
   name: string;
@@ -19,13 +24,19 @@ export interface MenuItem {
   type?: number;
 }
 
+interface Props {
+  collapsed: boolean;
+  setActiveKey(key: string): Action<string[]>;
+  addPageTab(pageTab: PageTab): Action<PageTab>;
+}
+
 const { SubMenu } = Menu;
 let menus_: any = [];
 
 export default connect((state) => state, {
   setActiveKey,
   addPageTab,
-})((props: any) => {
+})((props: Props) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [rootSubmenuKeys, setRootSubmenuKeys] = useState<string[]>([]);
 
@@ -64,17 +75,25 @@ export default connect((state) => state, {
   };
 
   useMount(() => {
+    const defaultPageTab = {
+      name: '',
+      url: '',
+    };
     setLogo(data.data[0] && data.data[0].favicon);
     menus_ =
       data.data[0].children &&
       data.data[0].children.filter((item: any) => !item.type);
+
     setOpenKeys([menus_[0].url]);
     setRootSubmenuKeys(menus_.map((menu: any) => menu.url));
+    defaultPageTab.name = menus_[0].children[0].name;
+    defaultPageTab.url = menus_[0].children[0].url;
     props.setActiveKey(menus_[0].children[0].url);
-    props.addPageTab(menus_[0].children[0]);
+
+    props.addPageTab(defaultPageTab);
   });
 
-  const getSubmenu1 = () => {
+  const getSubmenu = () => {
     return menus_.map((item: any) => {
       if (item.children.length === 0) {
         return (
@@ -120,9 +139,8 @@ export default connect((state) => state, {
   };
 
   const onOpenChange = (openKeys: string[]) => {
-    const latestOpenKey: any = openKeys.find(
-      (key) => openKeys.indexOf(key) === -1
-    );
+    const latestOpenKey: string =
+      openKeys.find((key) => openKeys.indexOf(key) === -1) || '';
     if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
       setOpenKeys(openKeys);
     } else {
@@ -130,9 +148,13 @@ export default connect((state) => state, {
     }
   };
 
-  const onSelect = (value: any) => {
+  const onSelect = (value: SelectParam) => {
+    const pageTab = {
+      name: findMenuByKey(value.key)?.name || '',
+      url: findMenuByKey(value.key)?.url || '',
+    };
     props.setActiveKey(value.key);
-    props.addPageTab(findMenuByKey(value.key));
+    props.addPageTab(pageTab);
   };
 
   return (
@@ -143,20 +165,11 @@ export default connect((state) => state, {
         onSelect={onSelect}
         theme="light"
         mode={!props.collapsed ? 'inline' : 'vertical'}
-        defaultSelectedKeys={store.getState().pageTabState.activeKey}
-        selectedKeys={store.getState().pageTabState.activeKey}
+        defaultSelectedKeys={store.getState().pageTabReducer.activeKey}
+        selectedKeys={store.getState().pageTabReducer.activeKey}
       >
-        {getSubmenu1()}
+        {getSubmenu()}
       </Menu>
     </div>
   );
 });
-
-export interface MenuItem {
-  key?: string;
-  name: string;
-  url?: string;
-  menuIcon?: string | ReactNode;
-  children?: MenuItem[];
-  type?: number;
-}
