@@ -1,44 +1,39 @@
 import { Action } from 'redux-actions';
 import { PageTab } from '../../../redux/pageTab/types';
-import React, { ReactNode, useState } from 'react';
+import React, {
+  // ReactNode,
+  useState,
+} from 'react';
 import { connect } from 'react-redux';
 import { Menu } from 'antd';
-import { useMount } from 'ahooks';
-// import { routes } from '../../../config';
-import data from './data';
-// import { SlideBarConfig, MenuRouter } from '../../../types';
-// import { MenuRouter } from '../../../types';
+import { useMount, useSessionStorageState } from 'ahooks';
 import { Link } from 'react-router-dom';
 import { setActiveKey, addPageTab } from '../../../redux/pageTab/actions';
-// import { saveMenus } from '../../../redux/menu/actions';
+import { getPageMenu } from '../../../redux/pageMenu/actions';
 import store from '../../../redux/redux';
 import './menu.scss';
 import { SelectParam } from 'antd/lib/menu';
-
-export interface MenuItem {
-  key?: string;
-  name: string;
-  url?: string;
-  menuIcon?: string | ReactNode;
-  children?: MenuItem[];
-  type?: number;
-}
+import { useAxiosReq } from '../../../http';
+import { PageMenu } from '../../../redux/pageMenu/types';
 
 interface Props {
   collapsed: boolean;
   setActiveKey(key: string): Action<string[]>;
   addPageTab(pageTab: PageTab): Action<PageTab>;
+  getPageMenu(): any;
 }
 
 const { SubMenu } = Menu;
-let menus_: any = [];
 
 export default connect((state) => state, {
   setActiveKey,
   addPageTab,
+  getPageMenu,
 })((props: Props) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [rootSubmenuKeys, setRootSubmenuKeys] = useState<string[]>([]);
+  const [router, setRouter] = useSessionStorageState('router', '');
+  const { run: requestLogoRun } = useAxiosReq();
 
   // 设置 logo
   const setLogo = (url: string) => {
@@ -49,8 +44,8 @@ export default connect((state) => state, {
     document.getElementsByTagName('head')[0].appendChild(link);
   };
   const recursionMenus = (
-    items: MenuItem[],
-    action: (item: MenuItem) => boolean
+    items: PageMenu[],
+    action: (item: PageMenu) => boolean
   ): void => {
     for (const item of items) {
       if (!action(item)) {
@@ -62,9 +57,11 @@ export default connect((state) => state, {
     }
   };
 
-  const findMenuByKey = (key: string): MenuItem | null => {
-    let result: MenuItem | null = null;
-    recursionMenus(menus_, (item: MenuItem) => {
+  const findMenuByKey = (key: string): PageMenu | null => {
+    const { pageMenu } = store.getState().pageMenuReducer;
+
+    let result: PageMenu | null = null;
+    recursionMenus(pageMenu, (item: PageMenu) => {
       if (item.url && item.url == key) {
         result = item;
         return false;
@@ -74,27 +71,32 @@ export default connect((state) => state, {
     return result;
   };
 
-  useMount(() => {
+  useMount(async () => {
+    await props.getPageMenu();
+    const { pageMenu } = store.getState().pageMenuReducer;
+    requestLogoRun({ url: '/layout/logo', method: 'get' }).then((res) => {
+      setLogo(res.data && res.data.url);
+    });
+    setOpenKeys([pageMenu[0].url]);
+    setRootSubmenuKeys(pageMenu.map((menu: PageMenu) => menu.url));
     const defaultPageTab = {
-      name: '',
-      url: '',
+      name:
+        (findMenuByKey(router) as PageMenu).name ||
+        pageMenu[0].children[0].name,
+      url:
+        (findMenuByKey(router) as PageMenu).url || pageMenu[0].children[0].url,
     };
-    setLogo(data.data[0] && data.data[0].favicon);
-    menus_ =
-      data.data[0].children &&
-      data.data[0].children.filter((item: any) => !item.type);
-
-    setOpenKeys([menus_[0].url]);
-    setRootSubmenuKeys(menus_.map((menu: any) => menu.url));
-    defaultPageTab.name = menus_[0].children[0].name;
-    defaultPageTab.url = menus_[0].children[0].url;
-    props.setActiveKey(menus_[0].children[0].url);
+    if (!router) {
+      props.setActiveKey(pageMenu[0].children[0].url);
+    }
 
     props.addPageTab(defaultPageTab);
   });
 
   const getSubmenu = () => {
-    return menus_.map((item: any) => {
+    const { pageMenu } = store.getState().pageMenuReducer;
+
+    return pageMenu.map((item: PageMenu) => {
       if (item.children.length === 0) {
         return (
           <Menu.Item key={item.url} icon={item.menuIcon}>
@@ -106,9 +108,9 @@ export default connect((state) => state, {
           </Menu.Item>
         );
       } else {
-        const menuRouters: any[] = [];
+        const menuRouters: PageMenu[] = [];
 
-        item.children.map((v: any) => {
+        item.children.map((v: PageMenu) => {
           menuRouters.push(v);
           return true;
         });
@@ -153,6 +155,7 @@ export default connect((state) => state, {
       name: findMenuByKey(value.key)?.name || '',
       url: findMenuByKey(value.key)?.url || '',
     };
+    setRouter(value.key);
     props.setActiveKey(value.key);
     props.addPageTab(pageTab);
   };
@@ -165,8 +168,12 @@ export default connect((state) => state, {
         onSelect={onSelect}
         theme="light"
         mode={!props.collapsed ? 'inline' : 'vertical'}
-        defaultSelectedKeys={store.getState().pageTabReducer.activeKey}
-        selectedKeys={store.getState().pageTabReducer.activeKey}
+        defaultSelectedKeys={
+          router ? [router] : store.getState().pageTabReducer.activeKey
+        }
+        selectedKeys={
+          router ? [router] : store.getState().pageTabReducer.activeKey
+        }
       >
         {getSubmenu()}
       </Menu>

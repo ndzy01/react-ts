@@ -53,11 +53,13 @@ export default withRouter(
     };
     return (
       <div className="ant-layout-header-under">
+        {console.log(sessionStorage.getItem('router'))}
         <Tabs
           onChange={onTabChange}
           hideAdd
           animated={false}
           activeKey={store.getState().pageTabReducer.activeKey[0]}
+          defaultActiveKey={sessionStorage.getItem('router') || undefined}
           type="editable-card"
           onEdit={onEdit}
           tabBarExtraContent={
