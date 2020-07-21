@@ -53,7 +53,6 @@ export default withRouter(
     };
     return (
       <div className="ant-layout-header-under">
-        {console.log(sessionStorage.getItem('router'))}
         <Tabs
           onChange={onTabChange}
           hideAdd
@@ -72,7 +71,6 @@ export default withRouter(
                   ...pageTabArr.slice().filter((pane) => pane.url == activeKey),
                 ];
                 props.removePageTab(activeKeyTab);
-                // appTabStore.removePageTab(activeKeyTab);
               }}
             >
               清空其他

@@ -74,17 +74,19 @@ export default connect((state) => state, {
   useMount(async () => {
     await props.getPageMenu();
     const { pageMenu } = store.getState().pageMenuReducer;
+    console.log(pageMenu);
     requestLogoRun({ url: '/layout/logo', method: 'get' }).then((res) => {
       setLogo(res.data && res.data.url);
     });
     setOpenKeys([pageMenu[0].url]);
     setRootSubmenuKeys(pageMenu.map((menu: PageMenu) => menu.url));
     const defaultPageTab = {
-      name:
-        (findMenuByKey(router) as PageMenu).name ||
-        pageMenu[0].children[0].name,
-      url:
-        (findMenuByKey(router) as PageMenu).url || pageMenu[0].children[0].url,
+      name: router
+        ? (findMenuByKey(router) as PageMenu).name
+        : pageMenu[0].children[0].name,
+      url: router
+        ? (findMenuByKey(router) as PageMenu).url
+        : pageMenu[0].children[0].url,
     };
     if (!router) {
       props.setActiveKey(pageMenu[0].children[0].url);

@@ -10,7 +10,6 @@ const initialState: PageMenuState = {
 const pageMenuReducer = handleActions(
   {
     [GET_MENU]: (state: PageMenuState, action) => {
-      console.log(action);
       return Object.assign({}, state, {
         pageMenu: action.payload,
       });

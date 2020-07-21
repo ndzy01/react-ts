@@ -12,7 +12,7 @@ import {
   Route,
   Switch,
   HashRouter,
-  Redirect,
+  // Redirect,
 } from 'react-router-dom';
 import { Divider } from 'antd';
 import { routes } from './config';
@@ -103,7 +103,7 @@ function App() {
                   {routes.routes.map((route, i) => {
                     return <Route key={i} {...route} />;
                   })}
-                  <Redirect path="/" to={{ pathname: '/water-daily-list' }} />
+                  {/* <Redirect path="/" to={{ pathname: '/water-daily-list' }} /> */}
                   {/* <Route component={Err404} /> */}
                 </Switch>
               </Suspense>

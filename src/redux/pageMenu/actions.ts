@@ -7,10 +7,11 @@ export const getPageMenu = createAction(GET_MENU, async () => {
   const menu =
     res.data.data[0].children &&
     res.data.data[0].children.filter((item: PageMenu) => !item.type);
-  console.log(menu);
   menu.map((item: PageMenu) => {
     delete item.id;
     delete item.pId;
   });
+
   return menu;
+  // return menu;
 });

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { message } from 'antd';
 import { baseUrl } from '../config';
 import { useRequest } from 'ahooks';
 
@@ -11,27 +12,32 @@ const http = axios.create({
 //添加一个响应拦截器
 http.interceptors.response.use(
   function (response) {
-    if (response.data.status === 500) {
-      return Promise.reject('服务器出错！');
+    if (response.data.status === 200) {
+      return response;
     }
     return response;
   },
   function (err) {
+    message.error('网络异常！');
     return Promise.reject(err);
   }
 );
 
-export const useAxiosReq = (options?: any) => useRequest((param) => param, {
-  requestMethod: (param: any) => http(param),
-  formatResult: (res: AxiosResponse) => res.data,
-  ...options,
-});
+export const useAxiosReq = (options?: any) =>
+  useRequest((param) => param, {
+    // throwOnError: true,
+    requestMethod: (param: any) => http(param),
+    formatResult: (res: AxiosResponse) => res.data,
+    ...options,
+  });
 
-export const useLazyAxiosReq = (options?: any) => useRequest((param) => param, {
-  manual: true,
-  requestMethod: (param: any) => http(param),
-  formatResult: (res: AxiosResponse) => res.data,
-  ...options,
-});
+export const useLazyAxiosReq = (options?: any) =>
+  useRequest((param) => param, {
+    manual: true,
+    // throwOnError: true,
+    requestMethod: (param: any) => http(param),
+    formatResult: (res: AxiosResponse) => res.data,
+    ...options,
+  });
 
 export default http;
