@@ -2,14 +2,14 @@ import { Action } from 'redux-actions';
 import { PageTab } from '../../../redux/pageTab/types';
 import React, {
   // ReactNode,
-  useState,
+  useState
 } from 'react';
 import { connect } from 'react-redux';
 import { Menu } from 'antd';
 import { useMount, useSessionStorageState } from 'ahooks';
 import { Link } from 'react-router-dom';
 import { setActiveKey, addPageTab } from '../../../redux/pageTab/actions';
-import { getPageMenu } from '../../../redux/pageMenu/actions';
+import { getpagemenuasync } from '../../../redux/pageMenu/pageMenu.redux';
 import store from '../../../redux/redux';
 import './menu.scss';
 import { SelectParam } from 'antd/lib/menu';
@@ -20,7 +20,7 @@ interface Props {
   collapsed: boolean;
   setActiveKey(key: string): Action<string[]>;
   addPageTab(pageTab: PageTab): Action<PageTab>;
-  getPageMenu(): any;
+  getpagemenuasync(): any;
 }
 
 const { SubMenu } = Menu;
@@ -28,7 +28,7 @@ const { SubMenu } = Menu;
 export default connect((state) => state, {
   setActiveKey,
   addPageTab,
-  getPageMenu,
+  getpagemenuasync
 })((props: Props) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [rootSubmenuKeys, setRootSubmenuKeys] = useState<string[]>([]);
@@ -72,9 +72,9 @@ export default connect((state) => state, {
   };
 
   useMount(async () => {
-    await props.getPageMenu();
+    await props.getpagemenuasync();
     const { pageMenu } = store.getState().pageMenuReducer;
-    console.log(pageMenu);
+
     requestLogoRun({ url: '/layout/logo', method: 'get' }).then((res) => {
       setLogo(res.data && res.data.url);
     });
@@ -86,7 +86,7 @@ export default connect((state) => state, {
         : pageMenu[0].children[0].name,
       url: router
         ? (findMenuByKey(router) as PageMenu).url
-        : pageMenu[0].children[0].url,
+        : pageMenu[0].children[0].url
     };
     if (!router) {
       props.setActiveKey(pageMenu[0].children[0].url);
@@ -155,7 +155,7 @@ export default connect((state) => state, {
   const onSelect = (value: SelectParam) => {
     const pageTab = {
       name: findMenuByKey(value.key)?.name || '',
-      url: findMenuByKey(value.key)?.url || '',
+      url: findMenuByKey(value.key)?.url || ''
     };
     setRouter(value.key);
     props.setActiveKey(value.key);

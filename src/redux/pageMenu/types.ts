@@ -1,5 +1,3 @@
-export const GET_MENU = 'GET_MENU';
-
 export interface PageMenu {
   id: string;
   pId: string;
